@@ -25,12 +25,12 @@ class Player(models.Model):
     def to_json(self, full=False):
         if not full:
             return {
-                'player_id': self.pid, 
+                'pid': self.pid, 
                 'name': self.name
             }
         else:
             return {
-                'player_id': self.pid, 
+                'pid': self.pid, 
                 'name': self.name,
                 'games_waiting': [g.gid for g in self.games.filter(status=Game.WAITING).all()],
                 'games_playing': [g.gid for g in self.games.filter(status=Game.PLAYING).all()],
