@@ -1,12 +1,12 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.views.generic.base import View
 from players.models import Player, Game, GameTurn, GameTurnPlay
 from django.db import IntegrityError
 
 class JsonErrorResponse(JsonResponse):
     "Like a regular JsonResponse, but with an error status code"
-    status_code = 400
+    status_code = 404
 
 class PlayerView(View):
     "A view which automatically looks up the player"
@@ -19,7 +19,7 @@ class PlayerView(View):
         try:
             self.player = Player.objects.get(pid=pid)
         except Player.DoesNotExist:
-            raise JsonErrorResponse({'error': 'Invalid player ID'})
+            raise Http404({'error': 'Invalid player ID'})
 
     def handle(self, player):
         "Does the view's work. Override this in subclasses."
@@ -36,7 +36,7 @@ class GameView(PlayerView):
         try:
             self.game = Game.objects.get(gid=gid)
         except Game.DoesNotExist:
-            raise JsonErrorResponse({'error': 'Invalid game ID'})
+            raise Http404({'error': 'Invalid game ID'})
 
     def handle(self, player, game):
         "Does the view's work. Override this in subclasses."
@@ -58,12 +58,12 @@ class NewGameView(PlayerView):
         game.players.add(self.player, Player.treasure_player())
         return redirect('show_game', self.player.pid, game.gid)
 
-# TODO What happens when there are no open games?
-# TODO don't join a game you're already in
 class JoinAnyGameView(PlayerView):
     "Selects a game waiting for players and joins it"
     def handle(self, player):
-        game = Game.objects.filter(status=Game.WAITING)[0]
+        if not Game.objects.exclude(players=self.player).filter(status=Game.WAITING).exists():
+            return JsonErrorResponse({'error': 'no open games'})
+        game = Game.objects.exclude(players=self.player).filter(status=Game.WAITING).first()
         game.players.add(self.player)
         game.status = Game.PLAYING
         game.add_turn()
