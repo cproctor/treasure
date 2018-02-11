@@ -73,11 +73,10 @@ class Game(models.Model):
         return {
             'gid': self.gid,
             'status': self.get_status_display(),
-            'players': [{
-                'name': p.name, 
+            'players': {p.name: {
                 'hand': self.hand(p, mask_for_player=mask_for_player), 
                 'score': self.score(p)
-            } for p in self.players.exclude(name='treasure')],
+            } for p in self.players.exclude(name='treasure')},
             'turns': [t.to_json(mask_for_player=mask_for_player) for t in self.turns.all()]
         }
 

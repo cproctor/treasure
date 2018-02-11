@@ -70,6 +70,14 @@ class JoinAnyGameView(PlayerView):
         game.save()
         return redirect('show_game', self.player.pid, game.gid) 
 
+class ResumeGameView(PlayerView):
+    "Resumes an active game"
+    def handle(self, player):
+        if not Game.objects.filter(status=Game.PLAYING, players=self.player).exists():
+            return JsonErrorResponse({'error': 'no game to resume'})
+        game = Game.objects.filter(status=Game.PLAYING, players=self.player).first()
+        return redirect('show_game', self.player.pid, game.gid)
+
 class JoinGameView(GameView):
     def handle(self, player, game):
         if self.game.status is not Game.WAITING or self.player in self.game.players.all():

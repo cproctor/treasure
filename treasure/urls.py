@@ -24,6 +24,7 @@ urlpatterns = [
     path(r'players/<int:player>', views.PlayerView.as_view(), name="show_player"),
     path(r'players/<int:player>/games/new', views.NewGameView.as_view(), name="new_game"),
     path(r'players/<int:player>/games/join', views.JoinAnyGameView.as_view(), name="join_any_game"),
+    path(r'players/<int:player>/games/resume', views.ResumeGameView.as_view(), name="resume_game"),
     path(r'players/<int:player>/games/<int:game>/join', views.JoinGameView.as_view(), name="join_game"),
     path(r'players/<int:player>/games/<int:game>', views.GameView.as_view(), name="show_game"),
     path(r'players/<int:player>/games/<int:game>/play/<int:play>', views.PlayMoveView.as_view(), name="play_move")
