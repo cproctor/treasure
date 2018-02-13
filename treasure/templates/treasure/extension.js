@@ -118,6 +118,14 @@ TreasureApi.prototype = {
     opponent_hand: function() {
         if (!this.game) return "";
         return has_cards_yes_no(this.game.players[this.opponent_name()].hand);
+    },
+    opponent_play: function() {
+        if (!this.game) return "";
+        for (turn in this.game.turns) {
+            if (this.opponent_name() in turn) {
+                return turn[this.opponent_name()];
+            }
+        }
     }
 }
 
@@ -136,7 +144,7 @@ api = new TreasureApi("http://treasure.chrisproctor.net/");
     ext.opponent_score = function() { if (!api.game) return ""; return api.game.players[api.opponent_name()].score;}
     ext.player_hand = api.player_hand.bind(api);
     ext.opponent_hand = api.opponent_hand.bind(api);
-
+    ext.opponent_play = api.opponent_play.bind(api);
     ext.new_player = api.new_player.bind(api);
     ext.get_player = api.get_player.bind(api);
     ext.new_game = api.new_game.bind(api);
@@ -146,7 +154,6 @@ api = new TreasureApi("http://treasure.chrisproctor.net/");
     ext.resume_game = api.resume_game.bind(api);
     ext.play_move = api.play_move.bind(api);
     ext.my_turn = api.player_can_play.bind(api);
-
     ext.game_status = function() { if (!api.game) return ""; return api.game.status; }
     ext.player_ok = function() { return !api.player_error;}
     ext.game_ok = function() { return !api.game_error;}
@@ -161,6 +168,7 @@ api = new TreasureApi("http://treasure.chrisproctor.net/");
             ['r', 'treasure', 'treasure'],
             ['r', 'player hand', 'player_hand'],
             ['r', 'opponent hand', 'opponent_hand'],
+            ['r', 'opponent play', 'opponent_play'],
             ['r', 'player score', 'player_score'],
             ['r', 'opponent score', 'opponent_score'],
 
