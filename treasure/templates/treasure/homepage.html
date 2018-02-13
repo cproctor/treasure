@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+    <head>
+        <style>
+            body {
+                width: 600px;
+                margin: 0 auto;
+                font-family: Helvetica;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Treasure</h1>
+        <p>This server implements an API for a simple card game. You and an opponent are competing for thirteen treasures. For each treasure, you and the opponent each play a card. Whoever plays the higher card wins the treasure. However, a 1 beats a 13. Using this server, you can create a player account, join games, and play games.</p>
+        <p>Available routes:</p>
+        <ul>
+            <li>/players/new/NAME</li>
+            <li>/players/PID</li>
+            <li>/players/PID/games/new</li>
+            <li>/players/PID/games/join</li>
+            <li>/players/PID/games/resume</li>
+            <li>/players/PID/games/GID/join</li>
+            <li>/players/PID/games/GID</li>
+            <li>/players/PID/games/GID/play/CARD</li>
+        </ul>
+    </body>
+</html>

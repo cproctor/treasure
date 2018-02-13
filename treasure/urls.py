@@ -17,9 +17,11 @@ from django.conf.urls import url
 from django.urls import path
 from django.contrib import admin
 import players.views as views
+from treasure.views import homepage
 
 urlpatterns = [
     path(r'admin/', admin.site.urls),
+    path(r'', homepage, name='home'),
     path(r'players/new/<str:player>', views.create_player, name="new_player"),
     path(r'players/<int:player>', views.PlayerView.as_view(), name="show_player"),
     path(r'players/<int:player>/games/new', views.NewGameView.as_view(), name="new_game"),
