@@ -11,32 +11,26 @@ class JsonErrorResponse(JsonResponse):
 class PlayerView(View):
     "A view which automatically looks up the player"
     def get(self, request, *args, **kwargs):
-        self.get_player(kwargs['player'])
-        return self.handle(*args, **kwargs)
-
-    def get_player(self, pid):
-        "Looks up the player, if a valid player ID was provided."
-        try:
-            self.player = Player.objects.get(pid=pid)
+        try: 
+            self.player = Player.objects.get(pid=kwargs['player'])
+            return self.handle(*args, **kwargs)
         except Player.DoesNotExist:
-            raise Http404({'error': 'Invalid player ID'})
+            return JsonErrorResponse({'error': 'invalid player id'})
 
     def handle(self, player):
         "Does the view's work. Override this in subclasses."
         return JsonResponse(self.player.to_json(full=True))
 
-class GameView(PlayerView):
+class GameView(View):
     def get(self, request, *args, **kwargs):
-        self.get_player(kwargs['player'])
-        self.get_game(kwargs['game'])
-        return self.handle(*args, **kwargs)
-
-    def get_game(self, gid):
-        "Looks up the game, if a valid game ID was provided."
         try:
-            self.game = Game.objects.get(gid=gid)
+            self.player = Player.objects.get(pid=kwargs['player'])
+            self.game = Game.objects.get(gid=kwargs['game'])
+            return self.handle(*args, **kwargs)
+        except Player.DoesNotExist:
+            return JsonErrorResponse({'error': 'invalid player id'})
         except Game.DoesNotExist:
-            raise Http404({'error': 'Invalid game ID'})
+            return JsonErrorResponse({'error': 'invalid game id'})
 
     def handle(self, player, game):
         "Does the view's work. Override this in subclasses."
