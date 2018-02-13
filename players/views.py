@@ -12,7 +12,7 @@ class PlayerView(View):
     "A view which automatically looks up the player"
     def get(self, request, *args, **kwargs):
         try: 
-            self.player = Player.objects.get(pid=kwargs['player'])
+            self.player = Player.objects.exclude(pid=0).get(pid=kwargs['player'])
             return self.handle(*args, **kwargs)
         except Player.DoesNotExist:
             return JsonErrorResponse({'error': 'invalid player id'})
@@ -24,7 +24,7 @@ class PlayerView(View):
 class GameView(View):
     def get(self, request, *args, **kwargs):
         try:
-            self.player = Player.objects.get(pid=kwargs['player'])
+            self.player = Player.objects.exclude(pid=0).get(pid=kwargs['player'])
             self.game = Game.objects.get(gid=kwargs['game'])
             return self.handle(*args, **kwargs)
         except Player.DoesNotExist:
