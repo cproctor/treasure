@@ -122,8 +122,8 @@ TreasureApi.prototype = {
     opponent_play: function() {
         if (!this.game) return "";
         for (turn in this.game.turns) {
-            if (this.opponent_name() in turn) {
-                return turn[this.opponent_name()];
+            if (this.opponent_name() in this.game.turns[turn]) {
+                return this.game.turns[turn][this.opponent_name()];
             }
         }
     }
