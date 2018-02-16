@@ -35,10 +35,10 @@ class Player(models.Model):
                 'games_waiting': [g.gid for g in self.games.filter(status=Game.WAITING).all()],
                 'games_playing': [g.gid for g in self.games.filter(status=Game.PLAYING).all()],
                 'games_complete': [g.gid for g in self.games.filter(status=Game.COMPLETE).all()],
+                'games_cancelled': [g.gid for g in self.games.filter(status=Game.CANCELLED).all()],
                 'stats': {
                     'wins': self.games_won.count(),
-                    'losses': self.games_lost.count(),
-                    'incomplete': self.games.filter(status=Game.PLAYING).count()
+                    'losses': self.games_lost.count()
                 }
             }
 
@@ -47,16 +47,19 @@ class Game(models.Model):
     WAITING = 0
     PLAYING = 1
     COMPLETE = 2
+    CANCELLED = 3
     STATUS = (
         (WAITING, "waiting for players"),
         (PLAYING, "playing"), 
-        (COMPLETE, "complete")
+        (COMPLETE, "complete"),
+        (CANCELLED, "cancelled")
     )
     gid = models.IntegerField(unique=True)
     status = models.IntegerField(choices=STATUS)
     winner = models.ForeignKey(Player, blank=True, null=True, related_name="games_won", on_delete=models.SET_NULL)
     loser = models.ForeignKey(Player, blank=True, null=True, related_name="games_lost", on_delete=models.SET_NULL)
     players = models.ManyToManyField(Player, related_name="games")
+    created_at = models.DateTimeField(auto_now_add=True)
 
     @classmethod
     def generate_gid(cls):
@@ -118,7 +121,6 @@ class Game(models.Model):
                 
     def finalize(self):
         self.status = Game.COMPLETE
-        real_players = self.players.exclude(name='treasure')
         scores = sorted([(self.score(p), p) for p in self.players.exclude(name='treasure')])
         if scores[0][0] != scores[1][0]:
             self.loser = scores[0][1]
@@ -159,6 +161,7 @@ class GameTurnPlay(models.Model):
     turn = models.ForeignKey(GameTurn, on_delete=models.CASCADE, related_name="plays")
     player = models.ForeignKey(Player, null=True, on_delete=models.SET_NULL)
     play = models.IntegerField()
+    played_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return "{} played {}".format(self.player, self.play)

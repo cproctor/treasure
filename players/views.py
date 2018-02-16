@@ -34,7 +34,10 @@ class GameView(View):
 
     def handle(self, player, game):
         "Does the view's work. Override this in subclasses."
-        return JsonResponse(self.game.to_json(mask_for_player=self.player))
+        if self.game.status == Game.PLAYING:
+            return JsonResponse(self.game.to_json(mask_for_player=self.player))
+        else:
+            return JsonResponse(self.game.to_json())
 
 def create_player(request, player):
     "Creates a new player"
