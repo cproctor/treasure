@@ -39,7 +39,7 @@ class TreasureClient:
         ])
 
     def join_game(self):
-        return self.api.join_game(input("Game ID: "))
+        return self.api.join_game(gid=input("Game ID: "))
 
     def play_turn(self):
         if self.api.can_play():
