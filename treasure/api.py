@@ -8,6 +8,7 @@ URLS = {
     'resume_game': 'players/{pid}/games/resume',
     'join_any_game': 'players/{pid}/games/join',
     'show_game': 'players/{pid}/games/{gid}',
+    'set_autoplay': 'players/{pid}/games/{gid}/autoplay',
     'play_move': 'players/{pid}/games/{gid}/play/{play}'
 }
 
@@ -94,6 +95,11 @@ class TreasureApi():
             raise ValueError("There is no current game")
         return self.game['status'] == 'playing' and self.player['name'] not in self.game['turns'][0].keys()
 
+    def set_autoplay(self, pid=None, gid=None):
+        return self.save_game(requests.get(self.get_url('set_autoplay', 
+            pid=pid or self.player['pid'], 
+            gid=gid or self.game['gid']
+        )))
 
     def play_move(self, play, pid=None, gid=None):
         return self.save_game(requests.get(self.get_url('play_move', 
