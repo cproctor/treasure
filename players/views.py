@@ -3,6 +3,8 @@ from django.http import JsonResponse, Http404
 from django.views.generic.base import View
 from players.models import Player, Game, GameTurn, GameTurnPlay
 from django.db import IntegrityError
+from players.bots import strategies
+from treasure import settings
 
 class JsonErrorResponse(JsonResponse):
     "Like a regular JsonResponse, but with an error status code"
@@ -103,13 +105,33 @@ class PlayMoveView(GameView):
             return JsonErrorResponse({'error': 'already played this turn'})
 
         turn.plays.create(player=self.player, play=play)
+
+        if self.game.autoplay:
+            bot = Player.bot_player()
+            strategy = strategies[settings.BOT_STRATEGY]
+            turn.plays.create(player=bot, play=strategy(self.game.to_json(mask_for_player=bot)))
+
         if turn.is_complete():
             if self.game.is_complete():
                 self.game.finalize()
                 self.game.save()
             else:
                 self.game.add_turn()
+
         return redirect('show_game', self.player.pid, self.game.gid) 
+
+class SetAutoPlayView(GameView):
+    def handle(self, player, game):
+        if self.game.status == Game.WAITING:
+            self.game.autoplay = True
+            self.game.players.add(Player.bot_player())
+            self.game.status = Game.PLAYING
+            self.game.add_turn()
+            self.game.save()
+            return redirect('show_game', self.player.pid, self.game.gid) 
+        else:
+            return JsonErrorResponse({'error': 'game already started'})
+        
     
 
 

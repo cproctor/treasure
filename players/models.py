@@ -18,6 +18,11 @@ class Player(models.Model):
         "returns the treasure player"
         return cls.objects.get(name='treasure')
 
+    @classmethod
+    def bot_player(cls):
+        "returns the bot"
+        return cls.objects.get(name="bot")
+
     def __str__(self):
         return "{} ({})".format(self.name, self.pid)
 
@@ -60,6 +65,7 @@ class Game(models.Model):
     loser = models.ForeignKey(Player, blank=True, null=True, related_name="games_lost", on_delete=models.SET_NULL)
     players = models.ManyToManyField(Player, related_name="games")
     created_at = models.DateTimeField(auto_now_add=True)
+    autoplay = models.BooleanField(default=False)
 
     @classmethod
     def generate_gid(cls):

@@ -31,5 +31,6 @@ urlpatterns = [
     path(r'players/<int:player>/games/resume', views.ResumeGameView.as_view(), name="resume_game"),
     path(r'players/<int:player>/games/<int:game>/join', views.JoinGameView.as_view(), name="join_game"),
     path(r'players/<int:player>/games/<int:game>', views.GameView.as_view(), name="show_game"),
+    path(r'players/<int:player>/games/<int:game>/autoplay', views.SetAutoPlayView.as_view(), name="autoplay"),
     path(r'players/<int:player>/games/<int:game>/play/<int:play>', views.PlayMoveView.as_view(), name="play_move")
 ]
