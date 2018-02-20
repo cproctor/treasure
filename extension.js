@@ -22,6 +22,7 @@ TreasureApi.prototype = {
         'resume_game': 'players/{pid}/games/resume',
         'join_any_game': 'players/{pid}/games/join',
         'show_game': 'players/{pid}/games/{gid}',
+        'set_autoplay': 'players/{pid}/games/{gid}/autoplay',
         'play_move': 'players/{pid}/games/{gid}/play/{play}'
     },
 
@@ -92,6 +93,10 @@ TreasureApi.prototype = {
         var url = this.get_url('show_game', (this.player || noPlayer).pid, gid)
         this.fetch_game(url, callback);
     },
+    set_autoplay: function(callback) {
+        var url = this.get_url('set_autoplay', (this.player || noPlayer).pid, (this.game || noGame).gid)
+        this.fetch_game(url, callback);
+    },
     play_move: function(play, callback) {
         var url = this.get_url('play_move', (this.player || noPlayer).pid, (this.game || noGame).gid, play);
         this.fetch_game(url, callback);
@@ -148,6 +153,7 @@ api = new TreasureApi("http://treasure.chrisproctor.net/");
     ext.new_player = api.new_player.bind(api);
     ext.get_player = api.get_player.bind(api);
     ext.new_game = api.new_game.bind(api);
+    ext.set_autoplay = api.set_autoplay.bind(api);
     ext.join_any_game = api.join_any_game.bind(api);
     ext.get_game = api.get_game.bind(api);
     ext.join_game = api.join_game.bind(api);
@@ -180,6 +186,7 @@ api = new TreasureApi("http://treasure.chrisproctor.net/");
             ['w', "join any open game", 'join_any_game'],
             ['w', "join game %n", 'join_game'],
             ['w', "resume a game I'm playing", 'resume_game'],
+            ['w', "autoplay", 'set_autoplay'],
             ['w', "play %n", 'play_move'],
 
             ['r', 'player id', 'player_id'],
