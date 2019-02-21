@@ -5,6 +5,9 @@ from players.models import Player, Game, GameTurn, GameTurnPlay
 from django.db import IntegrityError
 from players.bots import strategies
 from treasure import settings
+import logging
+
+log = logging.getLogger(__name__)
 
 class JsonErrorResponse(JsonResponse):
     "Like a regular JsonResponse, but with an error status code"
@@ -46,6 +49,7 @@ def create_player(request, player):
     try:
         p = Player(pid=Player.generate_pid(), name=player)
         p.save()
+        log.info("Created player {}".format(p))
         return JsonResponse(p.to_json())
     except IntegrityError:
         return JsonErrorResponse({'error': 'invalid name for new player'})
