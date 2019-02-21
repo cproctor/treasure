@@ -75,7 +75,7 @@ class Game(models.Model):
                 return id
 
     def __str__(self):
-        return "Game {} turns:{} status:{} players:{}".format(self.gid, self.turns.count(), 
+        return "<Game {} turns:{} status:{} players:{}>".format(self.gid, self.turns.count(), 
                 self.get_status_display(), ", ".join(str(p) for p in self.players.all()))
 
     def to_json(self, mask_for_player=None):
