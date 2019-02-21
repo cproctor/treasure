@@ -59,6 +59,7 @@ class NewGameView(PlayerView):
         game = Game(gid=Game.generate_gid(), status=Game.WAITING)
         game.save()
         game.players.add(self.player, Player.treasure_player())
+        log.info("{} created new game {}".format(player, game))
         return redirect('show_game', self.player.pid, game.gid)
 
 class JoinAnyGameView(PlayerView):
@@ -71,6 +72,7 @@ class JoinAnyGameView(PlayerView):
         game.status = Game.PLAYING
         game.add_turn()
         game.save()
+        log.info("{} requested to join any game and was assigned to {}".format(player, game))
         return redirect('show_game', self.player.pid, game.gid) 
 
 class ResumeGameView(PlayerView):
@@ -79,6 +81,7 @@ class ResumeGameView(PlayerView):
         if not Game.objects.filter(status=Game.PLAYING, players=self.player).exists():
             return JsonErrorResponse({'error': 'no game to resume'})
         game = Game.objects.filter(status=Game.PLAYING, players=self.player).first()
+        log.info("{} resumed {}".format(player, game))
         return redirect('show_game', self.player.pid, game.gid)
 
 class JoinGameView(GameView):
@@ -89,6 +92,7 @@ class JoinGameView(GameView):
         self.game.status = Game.PLAYING
         self.game.add_turn()
         self.game.save()
+        log.info("{} joined {}".format(player, self.game))
         return redirect('show_game', self.player.pid, self.game.gid)
 
 class PlayMoveView(GameView):
@@ -122,6 +126,8 @@ class PlayMoveView(GameView):
             else:
                 self.game.add_turn()
 
+        log.info("{} played {} in {}".format(player, play, self.game))
+
         return redirect('show_game', self.player.pid, self.game.gid) 
 
 class SetAutoPlayView(GameView):
@@ -132,6 +138,7 @@ class SetAutoPlayView(GameView):
             self.game.status = Game.PLAYING
             self.game.add_turn()
             self.game.save()
+            log.info("{} set {} to autoplay".format(player, self.game))
             return redirect('show_game', self.player.pid, self.game.gid) 
         else:
             return JsonErrorResponse({'error': 'game already started'})
