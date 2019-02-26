@@ -9,7 +9,7 @@ In this game, you and an opponent are competing for thirteen treasures, with poi
 
 This project was developed as part of an [interface design assignment](http://beyondbitsandatoms.org/interface-design.html) in [Beyond Bits and Atoms](http://beyondbitsandatoms.org/), a course taught by Paulo Blikstein and his graduate scudents at Stanford and Teachers College. 
 
-# Example clients
+## Example clients
 In addition to the server code, this repo contains three examples that might be useful if you're writing your own client:
 
 - `treasure/client.py` is a command-line client that supports all the features of the server. You can log in and play against other opponents.
